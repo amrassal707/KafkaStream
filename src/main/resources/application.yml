@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: kafka
+  cloud:
+    stream:
+      bindings:
+        producer-out-0:
+          destination: orderInputService
+        consumer-in-0:
+          destination: orderInputService
+      kafka:
+        binder:
+          brokers: localhost:9092
