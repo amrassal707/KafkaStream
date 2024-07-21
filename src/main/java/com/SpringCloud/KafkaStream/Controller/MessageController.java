@@ -15,7 +15,7 @@ public class MessageController {
     @GetMapping("/send")
     public String sendMessage(@RequestParam String message)
     {
-        prodService.SendMessageToBroker(message);
+        prodService.sendMessageToBroker(message);
         return "Message send successfully";
     }
 }
