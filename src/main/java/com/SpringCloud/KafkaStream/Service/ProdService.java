@@ -1,15 +1,11 @@
 package com.SpringCloud.KafkaStream.Service;
 
+import com.SpringCloud.KafkaStream.Domain.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.context.annotation.Bean;
+import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
-
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.Supplier;
 
 @Service
 public class ProdService {
@@ -20,7 +16,7 @@ public class ProdService {
     private String bindingName;
 
 
-    public void sendMessageToBroker(String message) {
+    public void sendMessageToBroker(Order message) {
             streamBridge.send(bindingName,message);
     }
 
