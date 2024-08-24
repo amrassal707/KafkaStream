@@ -1,26 +1,31 @@
-spring:
-  application:
-    name: kafka
-  cloud:
-    stream:
-      bindings:
-        producer-out-0:
-          destination: orderInputService
-        consumer-in-0:
-          group: orderGroup # without group DLQ won't work since it wants for the consumer group to be identified
-          destination: orderInputService
-          consumer:
-            max-attempts: 2 # Retry two times before sending to DLQ
-            backOffInitialInterval: 1000
-            backOffMaxInterval: 5000
-      kafka:
+  spring:
+    application:
+      name: kafka
+    cloud:
+      stream:
         bindings:
+          producer-out-0:
+            destination: orderInputService
           consumer-in-0:
+            group: orderGroup # without group DLQ won't work since it wants for the consumer group to be identified
+            destination: orderInputService
             consumer:
-              enable-dlq: true
-              dlq-name: orderFailedMessage
-          #    max-attempts: 2 # Retry two times before sending to DLQ , it has to be up in stream.bindings not here
-#              backOffInitialInterval: 1000
-#              backOffMaxInterval: 5000
-        binder:
-          brokers: localhost:9092
+              max-attempts: 2 # Retry two times before sending to DLQ
+              backOffInitialInterval: 1000
+              backOffMaxInterval: 5000
+          dlqConsumer-in-0: # New binding for the DLQ consumer
+            group: orderDlqGroup  # You can give this group a different name
+            destination: orderFailedMessage  # DLQ destination name
+        kafka:
+          bindings:
+            consumer-in-0:
+              consumer:
+                enable-dlq: true
+                dlq-name: orderFailedMessage
+        function:
+          definition: consumer;dlqConsumer # added multiple consumer beans for spring kafka to recognize
+            #    max-attempts: 2 # Retry two times before sending to DLQ , it has to be up in stream.bindings not here
+  #              backOffInitialInterval: 1000
+  #              backOffMaxInterval: 5000
+          binder:
+            brokers: localhost:9092

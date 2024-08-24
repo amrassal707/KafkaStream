@@ -23,6 +23,15 @@ public class ConService {
         return this::handleEvent;
     }
 
+    @Bean // another bean in the same consumer to read from DLQ, useful when you want the same consumer to try and consume from DLQ topic using CRONJOB
+    // it's best practice to have a separate consumer for it
+    public Consumer<Message<Order>> dlqConsumer(){
+        return this::handleDlqEvent;
+    }
+
+    private void handleDlqEvent(Message<Order> orderMessage) {
+        System.out.println("handling message thrown to DLQ: " + orderMessage.getPayload());
+    }
 
     public void handleEvent(Message<Order> message) {
 
