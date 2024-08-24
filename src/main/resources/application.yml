@@ -7,7 +7,16 @@ spring:
         producer-out-0:
           destination: orderInputService
         consumer-in-0:
+          group: orderGroup # without group DLQ won't work since it wants for the consumer group to be identified
           destination: orderInputService
       kafka:
+        bindings:
+          consumer-in-0:
+            consumer:
+              enable-dlq: true
+              dlq-name: orderFailedMessage
+              max-attempts: 2 # Retry two times before sending to DLQ
+              backOffInitialInterval: 1000
+              backOffMaxInterval: 5000
         binder:
           brokers: localhost:9092
